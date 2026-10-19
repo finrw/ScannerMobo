@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c1b19">
+<title>MoboScan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header class="top">
+    <div><h1>MoboScan</h1><p class="muted">Serial barcode dan tipe model</p></div>
+    <p id="count" class="mono muted">0 barang</p>
+  </header>
+
+  <!-- ===== SCAN ===== -->
+  <section id="v-scan" class="view">
+    <div class="seg">
+      <button id="tBc" class="on" type="button">Barcode</button>
+      <button id="tTx" type="button">Teks model</button>
+    </div>
+
+    <div class="cam">
+      <video id="vid" playsinline muted autoplay></video>
+      <div id="reader"></div>
+      <div id="box"></div>
+      <p id="camMsg" class="cam-msg"></p>
+    </div>
+
+    <div id="textTools" hidden>
+      <canvas id="mag"></canvas>
+      <p class="muted small">Cuplikan kotak<span id="sharp"></span>. Seluruh tulisan harus masuk, huruf tidak terpotong.</p>
+      <label class="lbl">Posisi kotak <input id="cropY" type="range" min="0.05" max="0.7" step="0.01" value="0.34"></label>
+      <label class="lbl">Tinggi kotak <input id="cropH" type="range" min="0.14" max="0.55" step="0.01" value="0.3"></label>
+    </div>
+
+    <div class="btns">
+      <button id="again" class="btn" type="button">Scan ulang</button>
+      <button id="shot" class="btn dark" type="button" hidden>Jepret &amp; baca</button>
+      <button id="gallery" class="btn" type="button">Dari galeri</button>
+      <button id="torch" class="btn" type="button" hidden>Senter: mati</button>
+    </div>
+    <input id="file" type="file" accept="image/*" hidden>
+
+    <label id="zoomWrap" class="lbl" hidden>Zoom <input id="zoom" type="range"></label>
+
+    <label class="lbl">Tanggal <input id="tanggal" type="date" class="field"></label>
+    <label class="lbl">Serial <input id="serial" class="field mono" placeholder="Scan atau ketik" autocomplete="off"></label>
+    <p id="info" class="small muted"></p>
+
+    <label class="lbl">Tipe model <input id="model" class="field mono" placeholder="Hasil baca, masih bisa diedit" autocomplete="off"></label>
+    <img id="preview" alt="Cuplikan yang dibaca" hidden>
+    <div id="alts" class="btns"></div>
+
+    <p class="lbl">Status</p>
+    <div id="statuses" class="grid2"></div>
+
+    <label class="lbl">Keterangan <textarea id="ket" rows="3" class="field"></textarea></label>
+    <div class="grid2">
+      <label class="lbl">Tanggal out <input id="tglOut" type="date" class="field"></label>
+      <label class="lbl">Tanggal kembali <input id="tglKembali" type="date" class="field"></label>
+    </div>
+    <button id="save" class="btn dark big" type="button">Simpan</button>
+  </section>
+
+  <!-- ===== DATA ===== -->
+  <section id="v-data" class="view" hidden>
+    <input id="q" class="field" placeholder="Cari serial atau model">
+    <select id="fstatus" class="field"></select>
+    <button id="refresh" class="btn" type="button">Muat ulang dari Spreadsheet</button>
+    <ul id="list" class="list"></ul>
+    <h2>Riwayat status</h2>
+    <ul id="logs" class="list"></ul>
+  </section>
+
+  <!-- ===== ATUR ===== -->
+  <section id="v-atur" class="view card" hidden>
+    <label class="lbl">URL Web App Spreadsheet
+      <input id="url" class="field mono small" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
+    </label>
+    <p class="muted small">Deploy Apps Script sebagai Web App (Execute as: Me, akses: Anyone), lalu tempel URL yang berakhir /exec.</p>
+    <div class="btns">
+      <button id="saveUrl" class="btn dark" type="button">Simpan URL</button>
+      <button id="testUrl" class="btn" type="button">Coba sambungan</button>
+    </div>
+    <label class="check"><input id="preferLocal" type="checkbox">
+      <span><b>Baca teks tanpa AI</b><br><span class="muted small">Gratis dan offline, tapi lebih sering salah huruf. Matikan agar stiker dibaca AI.</span></span>
+    </label>
+    <label class="lbl">Daftar tipe model
+      <textarea id="catalog" rows="6" class="field mono small" placeholder="Satu model per baris, misalnya:&#10;PRIME B450M-A&#10;NM-A531"></textarea>
+    </label>
+    <p class="muted small">Hasil baca yang mirip salah satu baris akan ditawarkan. Ejaan yang sama persis dipakai otomatis.</p>
+    <button id="clear" class="btn danger" type="button">Hapus salinan di perangkat</button>
+    <p id="active" class="ok small"></p>
+  </section>
+
+  <p id="msg" role="status"></p>
+</main>
+
+<nav class="dock">
+  <button data-view="scan" class="on" type="button">Scan</button>
+  <button data-view="data" type="button">Data</button>
+  <button data-view="atur" type="button">Atur</button>
+</nav>
+
+<div id="dlg" class="overlay" hidden>
+  <div class="sheet">
+    <h2 id="dlgTitle"></h2>
+    <p class="muted small">Tetap simpan sebagai OUT?</p>
+    <div class="grid2">
+      <button id="dlgNo" class="btn" type="button">Batal</button>
+      <button id="dlgYes" class="btn dark" type="button">Tetap simpan</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
+
